@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  GONOSUMCHECK: github.com/orchestra-mcp/*
+  GONOSUMDB: github.com/orchestra-mcp/*
+  GOFLAGS: -mod=mod
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - goos: darwin
+            goarch: amd64
+            runner: macos-latest
+          - goos: darwin
+            goarch: arm64
+            runner: macos-latest
+          - goos: linux
+            goarch: amd64
+            runner: ubuntu-latest
+          - goos: linux
+            goarch: arm64
+            runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Download dependencies
+        run: |
+          for i in 1 2 3; do
+            go mod download && break
+            echo "Retry $i: waiting for Go proxy to index..."
+            sleep 15
+          done
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: '0'
+        run: |
+          BINARY_NAME="plugin-bridge-firecrawl"
+          go build -trimpath -ldflags "-s -w" -o "${BINARY_NAME}" ./cmd/
+
+      - name: Package tarball
+        run: |
+          BINARY_NAME="plugin-bridge-firecrawl"
+          TARBALL="${BINARY_NAME}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz"
+          tar -czf "${TARBALL}" "${BINARY_NAME}"
+          echo "TARBALL=${TARBALL}" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.TARBALL }}
+          path: ${{ env.TARBALL }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/*.tar.gz

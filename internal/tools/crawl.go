@@ -117,7 +117,7 @@ type crawlStatusResponse struct {
 	Total     int    `json:"total"`
 	Data      []struct {
 		Markdown string            `json:"markdown"`
-		Metadata map[string]string `json:"metadata"`
+		Metadata map[string]any `json:"metadata"`
 	} `json:"data"`
 }
 
@@ -139,6 +139,17 @@ func GetCrawlStatus(bridge *Bridge) plugin.ToolHandler {
 	}
 }
 
+// metaStr returns a metadata value as a string, or "" if absent or non-string.
+func metaStr(m map[string]any, key string) string {
+	if v, ok := m[key]; ok {
+		if s, ok := v.(string); ok {
+			return s
+		}
+		return fmt.Sprintf("%v", v)
+	}
+	return ""
+}
+
 // formatCrawlStatus formats the crawl status response as Markdown.
 func formatCrawlStatus(crawlID string, resp *crawlStatusResponse) string {
 	var b strings.Builder
@@ -149,8 +160,8 @@ func formatCrawlStatus(crawlID string, resp *crawlStatusResponse) string {
 	if len(resp.Data) > 0 {
 		b.WriteString("## Results\n\n")
 		for i, page := range resp.Data {
-			title := page.Metadata["title"]
-			sourceURL := page.Metadata["sourceURL"]
+			title := metaStr(page.Metadata, "title")
+			sourceURL := metaStr(page.Metadata, "sourceURL")
 			if title == "" {
 				title = fmt.Sprintf("Page %d", i+1)
 			}

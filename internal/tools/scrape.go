@@ -54,7 +54,7 @@ type scrapeResponse struct {
 		HTML     string            `json:"html"`
 		RawHTML  string            `json:"rawHtml"`
 		Links    []string          `json:"links"`
-		Metadata map[string]string `json:"metadata"`
+		Metadata map[string]any `json:"metadata"`
 	} `json:"data"`
 }
 
@@ -116,7 +116,7 @@ func formatScrapeResult(url string, resp *scrapeResponse) string {
 	if len(resp.Data.Metadata) > 0 {
 		b.WriteString("\n---\n## Metadata\n")
 		for k, v := range resp.Data.Metadata {
-			fmt.Fprintf(&b, "- **%s:** %s\n", k, v)
+			fmt.Fprintf(&b, "- **%s:** %v\n", k, v)
 		}
 	}
 
