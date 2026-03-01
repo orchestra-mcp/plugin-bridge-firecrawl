@@ -13,6 +13,10 @@ jobs:
   test:
     name: Test & Build
     runs-on: ubuntu-latest
+    env:
+      GONOSUMCHECK: github.com/orchestra-mcp/*
+      GONOSUMDB: github.com/orchestra-mcp/*
+      GOFLAGS: -mod=mod
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +25,12 @@ jobs:
           go-version: "1.23"
 
       - name: Download dependencies
-        run: go mod download
+        run: |
+          for i in 1 2 3; do
+            go mod download && break
+            echo "Retry $i: waiting for Go proxy to index..."
+            sleep 15
+          done
 
       - name: Vet
         run: go vet ./...
