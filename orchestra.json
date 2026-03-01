@@ -1,0 +1,24 @@
+{
+    "name": "orchestra-mcp/plugin-bridge-firecrawl",
+    "description": "Firecrawl web scraping bridge plugin for Orchestra MCP.",
+    "type": "bridge",
+    "license": "MIT",
+    "homepage": "https://orchestra-mcp.dev",
+    "support": {
+        "issues": "https://github.com/orchestra-mcp/plugin-bridge-firecrawl/issues",
+        "source": "https://github.com/orchestra-mcp/plugin-bridge-firecrawl"
+    },
+    "require": {
+        "orchestra-mcp/gen-go": "^0.1.0",
+        "orchestra-mcp/sdk-go": "^0.1.0"
+    },
+    "bin": "bridge-firecrawl",
+    "extra": {
+        "plugin-id": "bridge.firecrawl",
+        "provides": ["tools"],
+        "provides_ai": ["firecrawl"],
+        "branch-alias": {
+            "dev-master": "0.1.x-dev"
+        }
+    }
+}
