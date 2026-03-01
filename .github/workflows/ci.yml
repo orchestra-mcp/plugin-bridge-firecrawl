@@ -30,4 +30,4 @@ jobs:
         run: go test ./...
 
       - name: Build
-        run: go build ./cmd/
+        run: go build -o bridge-firecrawl ./cmd/
