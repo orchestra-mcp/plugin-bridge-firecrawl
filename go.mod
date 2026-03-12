@@ -3,8 +3,8 @@ module github.com/orchestra-mcp/plugin-bridge-firecrawl
 go 1.25.0
 
 require (
-	github.com/orchestra-mcp/gen-go v1.0.3
-	github.com/orchestra-mcp/sdk-go v1.0.3
+	github.com/orchestra-mcp/gen-go v1.0.4
+	github.com/orchestra-mcp/sdk-go v1.0.4
 	google.golang.org/protobuf v1.36.11
 )
 
