@@ -14,9 +14,9 @@ jobs:
     name: Test & Build
     runs-on: ubuntu-latest
     env:
-      GONOSUMCHECK: github.com/orchestra-mcp/*
-      GONOSUMDB: github.com/orchestra-mcp/*
-      GOFLAGS: -mod=mod
+      GONOSUMCHECK: "*"
+      GONOSUMDB: "*"
+      GOFLAGS: "-mod=mod"
       GOPROXY: "https://proxy.golang.org,direct"
     steps:
       - uses: actions/checkout@v4

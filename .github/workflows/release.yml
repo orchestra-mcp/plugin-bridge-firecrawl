@@ -8,9 +8,9 @@ permissions:
   contents: write
 
 env:
-  GONOSUMCHECK: github.com/orchestra-mcp/*
-  GONOSUMDB: github.com/orchestra-mcp/*
-  GOFLAGS: -mod=mod
+  GONOSUMCHECK: "*"
+  GONOSUMDB: "*"
+  GOFLAGS: "-mod=mod"
 
 jobs:
   build:
